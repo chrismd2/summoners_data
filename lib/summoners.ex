@@ -21,7 +21,11 @@ defmodule Summoners do
 
   """
   def fetch_summoner_data(summoner_name, region) do
-    client(Mix.env).request_data(summoner_name, region)
+    recent_summoners = client(Mix.env).request_data(summoner_name, region)
+    |> Enum.take(5)
+    |> Enum.uniq()
+
+    recent_summoners
   end
 
   defp client(env) do
