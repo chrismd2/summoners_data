@@ -23,6 +23,7 @@ defmodule Summoners.MixProject do
   defp deps do
     [
       {:finch, "~> 0.18.0"},
+      {:jason, "~> 1.4.1"}
     ]
   end
 end
