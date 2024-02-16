@@ -2,6 +2,9 @@
 
 **TODO: Add description**
 
+## What's need to run
+Environment variabless are needed.  Before using `source .env` or on other appropriate file with keys updated in `.env.example`.
+
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
