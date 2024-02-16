@@ -22,6 +22,7 @@ defmodule Summoners.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:ecto, "~> 3.11.1"},
       {:finch, "~> 0.18.0"},
       {:jason, "~> 1.4.1"}
     ]
