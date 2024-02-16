@@ -8,20 +8,20 @@ defmodule Summoners do
 
   ## Examples
 
-      iex> Summoners.fetch_summoner_data("valid_summoner_name")
+      iex> Summoners.fetch_summoner_data("valid_summoner_name", "na1")
       ["summoner_name_1", "summoner_name_2"]
 
   ## Errors
 
-      iex> Summoners.fetch_summoner_data("non_existent_summoner")
+      iex> Summoners.fetch_summoner_data("non_existent_summoner", "na1")
       {:error, "summoner_name not found"}
 
-      iex> Summoners.fetch_summoner_data(:invalid)
+      iex> Summoners.fetch_summoner_data(:invalid, "na1")
       {:error, "summoner_name is invalid"}
 
   """
-  def fetch_summoner_data(summoner_name) do
-    client(Mix.env).request_data(summoner_name)
+  def fetch_summoner_data(summoner_name, region) do
+    client(Mix.env).request_data(summoner_name, region)
   end
 
   defp client(env) do
