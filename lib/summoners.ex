@@ -30,4 +30,11 @@ defmodule Summoners do
       _ -> Summoners.RequestClients.DevRequestClient
     end
   end
+
+  def start(_, _) do
+    children = [{Finch, name: Summoners.Finch}]
+    opts = [strategy: :one_for_one, name: Summoners.Supervisor]
+
+    Supervisor.start_link(children, opts)
+  end
 end
