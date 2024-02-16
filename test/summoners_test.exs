@@ -4,7 +4,7 @@ defmodule SummonersTest do
 
   describe "summoners tests" do
     test "gets summoners data and checks that monitored summoners are the same list" do
-      summoner_data = Summoners.fetch_summoner_data("valid_summoner_name", "na1")
+      summoner_data = Summoners.find_and_track_associated_summoners("valid_summoner_name", "na1")
       assert is_list(summoner_data)
       assert Enum.all?(
         summoner_data,
@@ -19,12 +19,12 @@ defmodule SummonersTest do
     end
 
     test "invalid name returns error tuple" do
-      summoner_data = Summoners.fetch_summoner_data(:invalid, "na1")
+      summoner_data = Summoners.find_and_track_associated_summoners(:invalid, "na1")
       assert summoner_data == {:error, "summoner_name is invalid"}
     end
 
     test "nonexistent name returns error tuple" do
-      summoner_data = Summoners.fetch_summoner_data("nonexistent_summoner", "na1")
+      summoner_data = Summoners.find_and_track_associated_summoners("nonexistent_summoner", "na1")
       assert summoner_data == {:error, "summoner_name not found"}
     end
   end

@@ -8,24 +8,28 @@ defmodule Summoners do
 
   ## Examples
 
-      iex> Summoners.fetch_summoner_data("valid_summoner_name", "na1")
+      iex> Summoners.find_and_track_associated_summoners("valid_summoner_name", "na1")
       ["summoner_name_1", "summoner_name_2"]
 
   ## Errors
 
-      iex> Summoners.fetch_summoner_data("non_existent_summoner", "na1")
+      iex> Summoners.find_and_track_associated_summoners("non_existent_summoner", "na1")
       {:error, "summoner_name not found"}
 
-      iex> Summoners.fetch_summoner_data(:invalid, "na1")
+      iex> Summoners.find_and_track_associated_summoners(:invalid, "na1")
       {:error, "summoner_name is invalid"}
 
   """
-  def fetch_summoner_data(summoner_name, region) do
-    recent_summoners = client(Mix.env).request_data(summoner_name, region)
-    |> Enum.take(5)
-    |> Enum.uniq()
+  def find_and_track_associated_summoners(summoner_name, region) do
+    recent_summoners = client(Mix.env).request_associated_summoners(summoner_name, region)
 
-    recent_summoners
+    if is_list(recent_summoners) do
+      recent_summoners
+      |> Enum.take(5)
+      |> Enum.uniq()
+    else
+      recent_summoners
+    end
   end
 
   defp client(env) do

@@ -11,7 +11,7 @@ defmodule Summoners.RequestClients.DevRequestClient do
 
   require Logger
 
-  def request_data(summoner_name, region) when is_binary(summoner_name) do
+  def request_associated_summoners(summoner_name, region) when is_binary(summoner_name) do
     with {"valid_name", true} <- {"valid_name", String.valid?(summoner_name)},
        url <- url(region) <> "/lol/summoner/v4/summoners/by-name/#{summoner_name}",
        {"valid_url", true, _url} <- {"valid_url", !is_tuple(url), url},
@@ -23,11 +23,11 @@ defmodule Summoners.RequestClients.DevRequestClient do
         %{id: encrypted_id} <- Jason.decode!(body) do
       Finch.build(:get, url(region) <> "/lol/league/v4/entries/by-summoner/#{encrypted_id}")
       |> Finch.request!(Summoners.Finch)
-      |> Map.get!(:body)
+      |> Map.get(:body)
       |> Jason.decode!()
       |> Enum.map(fn %{summoner_name: summoner_name} -> summoner_name end)
     else
-      {"valid_name", false} -> {:error, request_data(:invalid, region)}
+      {"valid_name", false} -> {:error, request_associated_summoners(:invalid, region)}
       {"valid_url", false, {:error, message}} -> {:error, message}
       %{status: 404} -> {:error, "summoner_name not found"}
       %{status: 401} -> {:error, "unauthorized"}
@@ -38,7 +38,7 @@ defmodule Summoners.RequestClients.DevRequestClient do
     end
   end
 
-  def request_data(_summoner_name, _region) do
+  def request_associated_summoners(_summoner_name, _region) do
     {:error, "summoner_name is invalid"}
   end
 
