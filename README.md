@@ -1,6 +1,6 @@
 # Summoners
 
-**TODO: Add description**
+This is a github project found here: https://github.com/chrismd2/summoners_data
 
 ## What's need to run
 Environment variables are needed.  Before using `source .env` or on other appropriate file with keys updated in `.env.example`.
