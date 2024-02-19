@@ -1,6 +1,8 @@
 defmodule Summoners.RequestClients.TestRequestClient do
+  @default_names ~w(summoner_name_1 summoner_name_2)
+
   def request_associated_summoners("valid_summoner_name", _region) do
-    ["summoner_name_1", "summoner_name_2"]
+    @default_names
   end
 
   def request_associated_summoners(summoner_name, region) when is_binary(summoner_name) do

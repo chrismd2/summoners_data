@@ -2,6 +2,7 @@ defmodule Summoners.SummonerTracking do
   use Agent
 
   alias Summoners.SummonerTracking.TrackedSummoner
+  alias Summoners.Client
   alias Task.Supervisor
   alias Summoners.TaskSupervisor
 
@@ -38,22 +39,24 @@ defmodule Summoners.SummonerTracking do
     Agent.update(__MODULE__, &Enum.reject(&1, fn element -> element == summoner end))
   end
 
-  def scheduled_tasks(attempts \\ 3)
+  def scheduled_tasks(attempts \\ 3, opts \\ [])
 
-  def scheduled_tasks(:stop) do
+  def scheduled_tasks(:stop, _) do
     Supervisor.children(TaskSupervisor)
     |> Enum.each(&Supervisor.terminate_child(TaskSupervisor, &1))
   end
 
-  def scheduled_tasks(attempts) do
+  def scheduled_tasks(attempts, opts) do
     case Enum.count(Supervisor.children(TaskSupervisor)) do
-      0 -> Supervisor.start_child(TaskSupervisor, &scheduled_delete/0)
+      0 ->
+        Supervisor.start_child(TaskSupervisor, &scheduled_delete/0)
+        Supervisor.start_child(TaskSupervisor, &scheduled_update_check/0)
         {:ok, "started"}
-      1 -> {:ok, "running"}
+      2 -> {:ok, "running"}
       _ ->
-        scheduled_tasks(:stop)
+        scheduled_tasks(:stop, opts)
         if attempts > 0 do
-          scheduled_tasks(attempts - 1)
+          scheduled_tasks(attempts - 1, opts)
         else
           {:error, "couldn't start"}
         end
@@ -67,5 +70,13 @@ defmodule Summoners.SummonerTracking do
     |> Enum.map(fn %{end_time: end_time} = summoner -> if DateTime.after?(DateTime.utc_now(), end_time), do: remove(summoner), else: summoner end)
 
     Agent.cast(__MODULE__, scheduled_delete())
+  end
+
+  def scheduled_update_check(opts \\ []) do
+    :timer.sleep(opts[:summoner_monitor_time] || 60_000)
+    monitored_summoners()
+    |> Enum.map(fn %{name: summoner_name} ->
+      Client.selected_client().get_summoner_play_data(summoner_name)
+    end)
   end
 end

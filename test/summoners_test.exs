@@ -14,8 +14,14 @@ defmodule SummonersTest do
       )
 
       monitored_summoners = Summoners.monitored_summoners()
-      |> Enum.map(fn %{summoner_name: summoner_name} -> summoner_name end)
-      assert monitored_summoners == summoner_data
+      assert summoner_data == monitored_summoners
+      |> Enum.map(fn %{name: summoner_name} -> summoner_name end)
+
+      :timer.sleep(1_500)
+
+      Summoners.find_and_track_associated_summoners("valid_summoner_name", "na1")
+      [%{end_time: new_time} | _] = Summoners.monitored_summoners()
+      assert Enum.all?(monitored_summoners, & !DateTime.after?(&1.end_time, new_time))
     end
 
     test "invalid name returns error tuple" do

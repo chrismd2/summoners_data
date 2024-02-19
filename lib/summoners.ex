@@ -1,5 +1,6 @@
 defmodule Summoners do
   alias Summoners.SummonerTracking
+  alias Summoners.RequestClients.Client
   @moduledoc """
   Documentation for `Summoners`.
   """
@@ -22,24 +23,39 @@ defmodule Summoners do
 
   """
   def find_and_track_associated_summoners(summoner_name, region) do
-    recent_summoners = client(Mix.env).request_associated_summoners(summoner_name, region)
+    recent_summoners = Client.selected_client(Mix.env).request_associated_summoners(summoner_name, region)
 
     {:ok, _} = SummonerTracking.scheduled_tasks()
 
     if is_list(recent_summoners) do
-      recent_summoners
+      :ok = recent_summoners
       |> Enum.take(5)
       |> Enum.uniq()
-    else
-      recent_summoners
+      |> Enum.each(&SummonerTracking.add_summoner(%{name: &1}))
     end
+    recent_summoners
   end
 
-  defp client(env) do
-    case env do
-      :test -> Summoners.RequestClients.TestRequestClient
-      _ -> Summoners.RequestClients.DevRequestClient
-    end
+  # @doc """
+  # Get monitored summoners
+
+  # ## Examples
+
+  #     iex> Summoners.monitored_summoners()
+  #     [
+  #       %{
+  #         name: "summoner_name_1",
+  #         end_date: ~U[2024-02-19 02:24:01.512197Z]
+  #       },
+  #       %{
+  #         name: "summoner_name_2",
+  #         end_date: ~U[2024-02-19 02:24:01.512197Z]
+  #       }
+  #     ]
+
+  # """
+  def monitored_summoners() do
+    SummonerTracking.monitored_summoners
   end
 
   def start(_, _) do
