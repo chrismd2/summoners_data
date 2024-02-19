@@ -28,12 +28,17 @@ defmodule Summoners do
     {:ok, _} = SummonerTracking.scheduled_tasks()
 
     if is_list(recent_summoners) do
-      :ok = recent_summoners
+      summoners = recent_summoners
+      |> Enum.map(fn %{summoner_name: summoner_name, puuid: puuid} -> %{name: summoner_name, puuid: puuid} end)
       |> Enum.take(5)
       |> Enum.uniq()
-      |> Enum.each(&SummonerTracking.add_summoner(%{name: &1}))
+
+      :ok = Enum.each(summoners, &SummonerTracking.add_summoner(%{name: &1.name, puuid: &1.puuid}))
+
+      Enum.map(summoners, fn %{name: summoner_name} -> summoner_name end)
+    else
+      recent_summoners
     end
-    recent_summoners
   end
 
   # @doc """

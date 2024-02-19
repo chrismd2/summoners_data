@@ -25,6 +25,10 @@ defmodule Summoners.SummonerTracking do
   end
 
   def add_summoner(summoner) when is_map(summoner) do
+    monitored_summoners()
+    |> Enum.filter(& &1.puuid == summoner.puuid)
+    |> Enum.each(&remove/1)
+
     summoner
     |> Map.put(:end_time, DateTime.add(DateTime.utc_now(), @time_to_track.amount, @time_to_track.units))
     |> TrackedSummoner.changeset

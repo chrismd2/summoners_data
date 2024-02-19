@@ -25,7 +25,6 @@ defmodule Summoners.RequestClients.DevRequestClient do
       |> Finch.request!(Summoners.Finch)
       |> Map.get(:body)
       |> Jason.decode!()
-      |> Enum.map(fn %{summoner_name: summoner_name} -> summoner_name end)
     else
       {"valid_name", false} -> {:error, request_associated_summoners(:invalid, region)}
       {"valid_url", false, {:error, message}} -> {:error, message}
