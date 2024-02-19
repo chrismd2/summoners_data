@@ -102,7 +102,7 @@ defmodule Summoners.SummonerTracking do
   def scheduled_update_check(opts \\ []) do
     monitored_summoners()
     |> Enum.map(fn %{name: summoner_name, puuid: puuid} = summoner ->
-      match_id = Client.selected_client().get_summoner_play_data(puuid, opts[:region] || "na1")
+      match_id = Client.selected_client().get_summoner_play_data(puuid, opts[:region])
       if summoner[:recent_match_id] != match_id do
         summoner
         |> Map.put(:recent_match_id, match_id)

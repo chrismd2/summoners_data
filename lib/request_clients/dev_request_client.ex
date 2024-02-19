@@ -49,6 +49,10 @@ defmodule Summoners.RequestClients.DevRequestClient do
     [{"Authorization", "Bearer #{key()}"}]
   end
 
+  defp url(nil) do
+    url(System.get_env("REGION") || "region not set")
+  end
+
   defp url(region) when region in @valid_regions do
     "https://#{String.downcase(region)}.#{@base_url}"
   end
@@ -58,7 +62,9 @@ defmodule Summoners.RequestClients.DevRequestClient do
     if region in @valid_regions do
       url(region)
     else
-      {:error, "invalid region"}
+      message = "couldn't build url in dev request client: \"#{region}\" is an invalid region"
+      Logger.error(message <> "\n  - try setting REGION in .env file to one in: \n\t#{inspect(@valid_regions)}")
+      {:error, message}
     end
   end
 
