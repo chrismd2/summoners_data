@@ -1,4 +1,5 @@
 defmodule Summoners do
+  alias Summoners.SummonerTracking
   @moduledoc """
   Documentation for `Summoners`.
   """
@@ -23,6 +24,8 @@ defmodule Summoners do
   def find_and_track_associated_summoners(summoner_name, region) do
     recent_summoners = client(Mix.env).request_associated_summoners(summoner_name, region)
 
+    {:ok, _} = SummonerTracking.scheduled_tasks()
+
     if is_list(recent_summoners) do
       recent_summoners
       |> Enum.take(5)
@@ -40,7 +43,11 @@ defmodule Summoners do
   end
 
   def start(_, _) do
-    children = [{Finch, name: Summoners.Finch}]
+    children = [
+      {Finch, name: Summoners.Finch},
+      SummonerTracking,
+      {Task.Supervisor, name: Summoners.TaskSupervisor}
+    ]
     opts = [strategy: :one_for_one, name: Summoners.Supervisor]
 
     Supervisor.start_link(children, opts)
