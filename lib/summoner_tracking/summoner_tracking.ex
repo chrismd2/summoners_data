@@ -2,7 +2,7 @@ defmodule Summoners.SummonerTracking do
   use Agent
 
   alias Summoners.SummonerTracking.TrackedSummoner
-  alias Summoners.Client
+  alias Summoners.RequestClients.Client
   alias Task.Supervisor
   alias Summoners.TaskSupervisor
 
