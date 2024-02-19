@@ -61,4 +61,12 @@ defmodule Summoners.RequestClients.DevRequestClient do
       {:error, "invalid region"}
     end
   end
+
+  def get_summoner_play_data(puuid, region) do
+    url = url(region) <> "/lol/match/v5/matches/by-puuid/#{puuid}/ids?#count=1"
+    Finch.build(:get, url, request_headers())
+    |> Finch.request!(Summoners.Finch)
+    |> Map.get(:body)
+    |> Jason.decode!()
+  end
 end

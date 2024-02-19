@@ -20,4 +20,8 @@ defmodule Summoners.RequestClients.TestRequestClient do
   def request_associated_summoners(_summoner_name, _region) do
     {:error, "summoner_name is invalid"}
   end
+
+  def get_summoner_play_data(_puuid, _region) do
+    Ecto.UUID.generate()
+  end
 end
