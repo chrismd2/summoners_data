@@ -31,7 +31,7 @@ defmodule Summoners.RequestClients.DevRequestClient do
       %{status: 404} -> {:error, "summoner_name not found"}
       %{status: 401} -> {:error, "unauthorized"}
       error ->
-        Logger.error("unknown error requesting data for summoner \"#{summoner_name}\" in region \"#{region}\".
+        Logger.error("unknown error requesting data for summoner \"#{summoner_name}\" in region \"#{region || System.get_env("REGION")}\".
                     Recieved #{inspect(error)}")
         {:error, "unknown error"}
     end

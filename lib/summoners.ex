@@ -22,7 +22,7 @@ defmodule Summoners do
       {:error, "summoner_name is invalid"}
 
   """
-  def find_and_track_associated_summoners(summoner_name, region) do
+  def find_and_track_associated_summoners(summoner_name, region \\ nil) do
     recent_summoners = Client.selected_client(Mix.env).request_associated_summoners(summoner_name, region)
 
     {:ok, _} = SummonerTracking.scheduled_tasks()
